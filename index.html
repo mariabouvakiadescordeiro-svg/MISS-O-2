@@ -1,0 +1,482 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Você decide o futuro da IA</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --cor-fundo: #160d26;
+            --cor-texto: #ffffff;
+            --cor-destaque: #d8b4fe;
+            --cor-botao: #8b5cf6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #160d26, #301653, #24103b);
+            color: var(--cor-texto);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .caixa-principal {
+            background: linear-gradient(145deg, #2b1745, #3b2060);
+            padding: 35px;
+            border: 1px solid #9b6bd8;
+            border-radius: 20px;
+            max-width: 750px;
+            width: 100%;
+            box-shadow: 0 0 30px rgba(183, 148, 244, 0.25);
+        }
+
+        h1 {
+            font-family: 'Chakra Petch', sans-serif;
+            text-align: center;
+            color: #d8b4fe;
+            text-shadow: 0 0 15px rgba(216, 180, 254, 0.5);
+            font-size: 32px;
+            margin-bottom: 25px;
+        }
+
+        p {
+            line-height: 1.8;
+            color: #eee1ff;
+            font-size: 15px;
+        }
+
+        .caixa-perguntas,
+        .caixa-resultado {
+            font-family: 'Chakra Petch', sans-serif;
+            font-size: 20px;
+            color: #e9d5ff;
+            margin-top: 25px;
+        }
+
+        .caixa-alternativas {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        button {
+            background: linear-gradient(90deg, #8b5cf6, #a855f7);
+            color: white;
+            border: 1px solid #c4a1ff;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #a78bfa, #c084fc);
+            box-shadow: 0 0 18px rgba(192, 132, 252, 0.6);
+            transform: scale(1.03);
+        }
+
+        .caixa-resultado {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid #a78bfa;
+            border-radius: 15px;
+        }
+
+        .caixa-resultado.mostrar {
+            display: block;
+        }
+
+        .caixa-perguntas {
+            display: block;
+        }
+
+        .tela-inicial {
+            display: block;
+        }
+
+        .iniciar-btn,
+        .novamente-btn {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .caixa-resultado p {
+            color: #f3e8ff;
+        }
+
+        @media (max-width: 600px) {
+            .caixa-principal {
+                padding: 22px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .caixa-perguntas,
+            .caixa-resultado {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="caixa-principal">
+
+        <h1>Você decide o futuro da IA</h1>
+
+        <div class="tela-inicial">
+
+            <p>
+                Novembro de 2022, a humanidade se viu em uma realidade perturbadora.
+
+                De repente, percebemos que as máquinas evoluíram para além do que imaginávamos.
+
+                Agora, elas escrevem e falam de um jeito tão parecido com humanos que é quase impossível diferenciar quem foi que escreveu ou falou o que.
+
+                Em meio a esse caos de identidade, uma missão surgiu.
+
+                Nosso objetivo: explorar o impacto da Inteligência Artificial (IA) em nossas vidas e confrontar as possibilidades que o futuro nos reserva.
+
+                O mundo nunca mais será o mesmo.
+            </p>
+
+            <button class="iniciar-btn">Iniciar</button>
+
+        </div>
+
+        <div class="caixa-perguntas"></div>
+
+        <div class="caixa-alternativas"></div>
+
+        <div class="caixa-resultado">
+
+            <p class="texto-resultado"></p>
+
+            <button class="novamente-btn">
+                Jogar novamente
+            </button>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        // ELEMENTOS DO HTML
+
+        const caixaPerguntas = document.querySelector(".caixa-perguntas");
+        const caixaAlternativas = document.querySelector(".caixa-alternativas");
+        const caixaResultado = document.querySelector(".caixa-resultado");
+        const textoResultado = document.querySelector(".texto-resultado");
+
+        const telaInicial = document.querySelector(".tela-inicial");
+        const botaoIniciar = document.querySelector(".iniciar-btn");
+        const botaoJogarNovamente = document.querySelector(".novamente-btn");
+
+
+        // NOMES ALEATÓRIOS
+
+        const nomes = [
+            "Fernanda",
+            "Giuliana",
+            "Maria Eduarda",
+            "Marcelo",
+            "Amanda",
+            "Gustavo",
+            "Gabriel"
+        ];
+
+        function aleatorio(lista) {
+            const posicao = Math.floor(Math.random() * lista.length);
+            return lista[posicao];
+        }
+
+
+        // PERGUNTAS DO JOGO
+
+        const perguntas = [
+
+            {
+                enunciado: "Assim que saiu da escola, você se depara com uma nova tecnologia: um chat que consegue responder todas as dúvidas de uma pessoa e também gera imagens e áudios hiper-realistas. Qual seu primeiro pensamento?",
+
+                alternativas: [
+
+                    {
+                        texto: "Isso é assustador!",
+
+                        afirmacao: [
+                            "No início, ficou com medo do que essa tecnologia pode fazer.",
+                            "Achou assustador pensar na velocidade com que a tecnologia está avançando."
+                        ],
+
+                        proxima: 1
+                    },
+
+                    {
+                        texto: "Isso é maravilhoso!",
+
+                        afirmacao: [
+                            "Quis saber como usar IA no seu dia a dia.",
+                            "Foi atrás de vídeos, artigos e mais informações sobre como utilizar essa tecnologia."
+                        ],
+
+                        proxima: 1
+                    }
+
+                ]
+            },
+
+            {
+                enunciado: "Em 2049, a Inteligência Artificial está presente em quase todos os lugares. Como você decide utilizar essa tecnologia?",
+
+                alternativas: [
+
+                    {
+                        texto: "Usar a IA para ajudar as pessoas.",
+
+                        afirmacao: [
+                            "Decidiu utilizar a inteligência artificial para melhorar a vida das pessoas.",
+                            "Percebeu que a IA poderia ser uma grande aliada na educação e na saúde."
+                        ],
+
+                        proxima: 2
+                    },
+
+                    {
+                        texto: "Ter cuidado e limitar seu uso.",
+
+                        afirmacao: [
+                            "Preferiu utilizar a tecnologia com responsabilidade e atenção.",
+                            "Defendeu que a inteligência artificial deveria ter limites e regras."
+                        ],
+
+                        proxima: 2
+                    }
+
+                ]
+            },
+
+            {
+                enunciado: "Uma empresa oferece a você a oportunidade de trabalhar desenvolvendo uma inteligência artificial. Qual seria sua decisão?",
+
+                alternativas: [
+
+                    {
+                        texto: "Aceitar o desafio!",
+
+                        afirmacao: [
+                            "Aceitou o desafio e começou a trabalhar em projetos de IA.",
+                            "Descobriu que poderia ajudar a construir um futuro melhor com a tecnologia."
+                        ],
+
+                        proxima: 3
+                    },
+
+                    {
+                        texto: "Recusar e observar os impactos.",
+
+                        afirmacao: [
+                            "Preferiu observar os impactos da tecnologia antes de participar de seu desenvolvimento.",
+                            "Passou a estudar os riscos e benefícios da inteligência artificial."
+                        ],
+
+                        proxima: 3
+                    }
+
+                ]
+            },
+
+            {
+                enunciado: "O futuro chegou. A inteligência artificial transformou o mundo. O que você acredita ser mais importante?",
+
+                alternativas: [
+
+                    {
+                        texto: "Inovação e progresso!",
+
+                        afirmacao: [
+                            "Acreditou que a inovação poderia transformar a sociedade para melhor.",
+                            "Defendeu que a tecnologia deveria continuar avançando com responsabilidade."
+                        ]
+
+                    },
+
+                    {
+                        texto: "Ética e responsabilidade!",
+
+                        afirmacao: [
+                            "Defendeu que o futuro da IA deveria ser construído com ética e responsabilidade.",
+                            "Concluiu que a tecnologia só vale a pena quando respeita os seres humanos."
+                        ]
+
+                    }
+
+                ]
+            }
+
+        ];
+
+
+        // VARIÁVEIS DO JOGO
+
+        let atual = 0;
+        let historiaFinal = "";
+        let nome = "";
+
+
+        // SUBSTITUI O NOME NA HISTÓRIA
+
+        function substituiNome() {
+
+            for (const pergunta of perguntas) {
+
+                pergunta.enunciado = pergunta.enunciado.replace(/você/gi, nome);
+
+            }
+
+        }
+
+
+        // INICIA O JOGO
+
+        function iniciaJogo() {
+
+            atual = 0;
+            historiaFinal = "";
+
+            nome = aleatorio(nomes);
+
+            substituiNome();
+
+            telaInicial.style.display = "none";
+
+            caixaResultado.classList.remove("mostrar");
+
+            mostraPergunta();
+
+        }
+
+
+        // MOSTRA AS PERGUNTAS
+
+        function mostraPergunta() {
+
+            caixaAlternativas.innerHTML = "";
+
+            if (atual >= perguntas.length) {
+
+                mostraResultado();
+                return;
+
+            }
+
+            const perguntaAtual = perguntas[atual];
+
+            caixaPerguntas.textContent = perguntaAtual.enunciado;
+
+            for (const alternativa of perguntaAtual.alternativas) {
+
+                const botao = document.createElement("button");
+
+                botao.textContent = alternativa.texto;
+
+                botao.addEventListener("click", function () {
+
+                    respostaSelecionada(alternativa);
+
+                });
+
+                caixaAlternativas.appendChild(botao);
+
+            }
+
+        }
+
+
+        // RESPOSTA SELECIONADA
+
+        function respostaSelecionada(opcaoSelecionada) {
+
+            const afirmacoes = aleatorio(opcaoSelecionada.afirmacao);
+
+            historiaFinal += afirmacoes + " ";
+
+            if (opcaoSelecionada.proxima !== undefined) {
+
+                atual = opcaoSelecionada.proxima;
+
+            } else {
+
+                mostraResultado();
+                return;
+
+            }
+
+            mostraPergunta();
+
+        }
+
+
+        // MOSTRA O RESULTADO FINAL
+
+        function mostraResultado() {
+
+            caixaPerguntas.textContent = `Em 2049, ${nome}...`;
+
+            textoResultado.textContent = historiaFinal;
+
+            caixaAlternativas.innerHTML = "";
+
+            caixaResultado.classList.add("mostrar");
+
+        }
+
+
+        // JOGA NOVAMENTE
+
+        function jogaNovamente() {
+
+            atual = 0;
+            historiaFinal = "";
+
+            caixaResultado.classList.remove("mostrar");
+
+            mostraPergunta();
+
+        }
+
+
+        // EVENTOS DOS BOTÕES
+
+        botaoIniciar.addEventListener("click", iniciaJogo);
+
+        botaoJogarNovamente.addEventListener("click", jogaNovamente);
+
+    </script>
+
+</body>
+</html>
